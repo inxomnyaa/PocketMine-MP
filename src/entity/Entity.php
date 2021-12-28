@@ -1130,7 +1130,7 @@ abstract class Entity{
 	}
 
 	public function isInsideOfSolid() : bool{
-		$block = $this->getWorld()->getBlockAt((int) floor($this->location->x), (int) floor($y = ($this->location->y + $this->getEyeHeight())), (int) floor($this->location->z));
+		$block = $this->getWorld()->getBlockAt((int) floor($this->location->x), (int) floor($this->location->y + $this->getEyeHeight()), (int) floor($this->location->z));
 
 		return $block->isSolid() && !$block->isTransparent() && $block->collidesWithBB($this->getBoundingBox());
 	}
@@ -1146,7 +1146,7 @@ abstract class Entity{
 		if($checkEyePos){
 			return $this->getWorld()->getBlockAt((int) floor($this->location->x), (int) $blockY, (int) floor($this->location->z)) instanceof $liquid;
 		}
-		$collisionBlocks = $this->getWorld()->getCollisionBlocks($this->boundingBox);
+		$collisionBlocks = $this->getBlocksAroundWithEntityInsideActions();
 		$blocks = array_filter($collisionBlocks, static function($block) use ($liquid, $y, $blockY, $submerged) : bool{
 			if($submerged && $block instanceof $liquid){
 				$f = ($blockY + 1) - ($block->getFluidHeightPercent() - 0.1111111);
