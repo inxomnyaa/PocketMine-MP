@@ -1,12 +1,12 @@
 <p align="center">
 	<a href="https://pmmp.io">
-		<!--[if IE]-->
-			<img src="/readme/pocketmine.png" alt="The PocketMine-MP logo" title="PocketMine" loading="eager" />
-		<!--[endif]-->
-		<!--picture>
-			<source srcset="/readme/pocketmine-dark.png" media="(prefers-color-scheme: dark)">
-			<img src="/readme/pocketmine.png" alt="The PocketMine-MP logo" title="PocketMine" loading="eager" />
-		</picture-->
+		<!--[if IE]>
+			<img src="readme/pocketmine.png" alt="The PocketMine-MP logo" title="PocketMine" loading="eager" />
+		<![endif]-->
+		<picture>
+			<source srcset="readme/pocketmine-dark.png" media="(prefers-color-scheme: dark)">
+			<img src="readme/pocketmine.png" alt="The PocketMine-MP logo" title="PocketMine" loading="eager" />
+		</picture>
 	</a><br>
 	<b>A highly customisable, open source server software for Minecraft: Bedrock Edition written in PHP</b>
 </p>
