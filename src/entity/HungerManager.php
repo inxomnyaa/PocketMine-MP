@@ -17,7 +17,7 @@
  * @link http://www.pocketmine.net/
  *
  *
-*/
+ */
 
 declare(strict_types=1);
 
@@ -32,25 +32,17 @@ use function min;
 
 class HungerManager{
 
-	/** @var Human */
-	private $entity;
+	private Attribute $hungerAttr;
+	private Attribute $saturationAttr;
+	private Attribute $exhaustionAttr;
 
-	/** @var Attribute */
-	private $hungerAttr;
-	/** @var Attribute */
-	private $saturationAttr;
-	/** @var Attribute */
-	private $exhaustionAttr;
+	private int $foodTickTimer = 0;
 
-	/** @var int */
-	private $foodTickTimer = 0;
+	private bool $enabled = true;
 
-	/** @var bool */
-	private $enabled = true;
-
-	public function __construct(Human $entity){
-		$this->entity = $entity;
-
+	public function __construct(
+		private Human $entity
+	){
 		$this->hungerAttr = self::fetchAttribute($entity, Attribute::HUNGER);
 		$this->saturationAttr = self::fetchAttribute($entity, Attribute::SATURATION);
 		$this->exhaustionAttr = self::fetchAttribute($entity, Attribute::EXHAUSTION);
@@ -141,14 +133,18 @@ class HungerManager{
 		if(!$this->enabled){
 			return 0;
 		}
-		$ev = new PlayerExhaustEvent($this->entity, $amount, $cause);
-		$ev->call();
-		if($ev->isCancelled()){
-			return 0.0;
+		$evAmount = $amount;
+		if(PlayerExhaustEvent::hasHandlers()){
+			$ev = new PlayerExhaustEvent($this->entity, $amount, $cause);
+			$ev->call();
+			if($ev->isCancelled()){
+				return 0.0;
+			}
+			$evAmount = $ev->getAmount();
 		}
 
 		$exhaustion = $this->getExhaustion();
-		$exhaustion += $ev->getAmount();
+		$exhaustion += $evAmount;
 
 		while($exhaustion >= 4.0){
 			$exhaustion -= 4.0;
@@ -167,7 +163,7 @@ class HungerManager{
 		}
 		$this->setExhaustion($exhaustion);
 
-		return $ev->getAmount();
+		return $evAmount;
 	}
 
 	public function getFoodTickTimer() : int{
@@ -208,7 +204,7 @@ class HungerManager{
 			if($food >= 18){
 				if($health < $this->entity->getMaxHealth()){
 					$this->entity->heal(new EntityRegainHealthEvent($this->entity, 1, EntityRegainHealthEvent::CAUSE_SATURATION));
-					$this->exhaust(3.0, PlayerExhaustEvent::CAUSE_HEALTH_REGEN);
+					$this->exhaust(6.0, PlayerExhaustEvent::CAUSE_HEALTH_REGEN);
 				}
 			}elseif($food <= 0){
 				if(($difficulty === World::DIFFICULTY_EASY && $health > 10) || ($difficulty === World::DIFFICULTY_NORMAL && $health > 1) || $difficulty === World::DIFFICULTY_HARD){
